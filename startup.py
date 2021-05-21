@@ -10,7 +10,9 @@ jsonData['songs'] = []
 
 # write fileurls into json
 for song in songs:
-    if song != '.gitignore' and song != '.gitkeep':
+    isNoGitFile = song != '.gitignore' and song != '.gitkeep'
+    fileExtensionAllowed = song.endswith('.mp3') or song.endswith('.ogg') or song.endswith('.wav')
+    if isNoGitFile and fileExtensionAllowed:
         jsonData['songs'].append({
             'songurl': song
         })
