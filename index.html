@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <title>Music-Player</title>
+        <link rel="stylesheet" type="text/css" href="css/normalmode.css">
+        <script src="https://use.fontawesome.com/8c1a9566b2.js"></script>
+        <script src="js/printer.js"></script>
+    </head>
+    <body>
+        <div class="top-bar">
+            <div class="top-bar-item">
+                Startseite
+            </div>
+            <div class="button">
+            New Playlist
+            </div>
+            <div class="button">
+            Playlists
+            </div>
+        </div>
+        <div id="main-content"></div>
+        <div id="dynamic-form-area"></div>
+
+    </body>
+    <script>
+        fetch("json/songurls.json")
+            .then(response => response.json())
+            .then(data => {
+                printTitles(data);
+            })
+    </script>
+</html>
