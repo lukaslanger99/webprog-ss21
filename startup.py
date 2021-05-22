@@ -2,12 +2,12 @@ import os
 import json
 
 # read files from dir
-songs = os.listdir('./files')
+songs = os.listdir('./music')
 
 # create jsonData object
 jsonData = {}
 jsonData['songs'] = []
-counter = 1
+counter = 0
 
 # write fileurls into json
 for song in songs:
@@ -24,3 +24,15 @@ for song in songs:
 # save json file
 with open('./json/songurls.json', 'w') as outfile:
     json.dump(jsonData, outfile)
+
+# server starten
+import http.server
+import socketserver
+
+PORT = 8000
+
+handler = http.server.SimpleHTTPRequestHandler
+
+with socketserver.TCPServer(("", PORT), handler) as httpd:
+    print("Server started at localhost:" + str(PORT))
+    httpd.serve_forever()
