@@ -36,6 +36,15 @@ function init(data) {
     }
 }
 
+function showPlaylists() {
+  var html = "";
+  for (var i = 0; i < localStorage.length; i++){
+    var item = localStorage.key(i);
+    html += item + '<br>';
+  }
+  document.getElementById("playlist-content").innerHTML = html;
+}
+
 // Update song details
 function loadSong(songId) {
   song = songs[songId];
@@ -207,3 +216,62 @@ audio.addEventListener('ended', nextSong);
 
 // Time of song
 // audio.addEventListener('timeupdate',DurTime);
+
+function createPlaylist() {
+  var container = document.getElementById('dynamic-form-area');
+  if (container) {
+    html = '\
+    <div class="bg-modal" id="bg-modal">\
+        <div class="modal-content">\
+            <div class="modal-header">\
+                Create Playlist\
+                <i class="fa fa-close fa-2x" aria-hidden="true" id="fa-close-form"></i>\
+            </div>\
+                <table style="margin:0 auto 15px auto;">\
+                    <tr>\
+                        <td><textarea id="playlist-name" type="text" name="title" cols="40" rows="1" placeholder="name"></textarea></td>\
+                    </tr>\
+                    <tr>\
+                      <td>\
+                        <button id="create-playlist-button">\
+                          Create\
+                        </button>\
+                      </td>\
+                    </tr>\
+                </table>\
+        </div>\
+    </div>';
+container.innerHTML = html;
+document.getElementById('bg-modal').style.display = 'flex';
+document.querySelector('html').style.overflow = 'hidden';
+
+var faCloseDynamicform = document.getElementById('fa-close-form');
+if (faCloseDynamicform) {
+  faCloseDynamicform.addEventListener('click',
+    function() {
+      var container = document.getElementById("dynamic-form-area");
+      if (container) {
+        container.innerHTML = '';
+      }
+    }
+  )
+}
+
+var createPlaylist = document.getElementById('create-playlist-button');
+if (createPlaylist) {
+  createPlaylist.addEventListener('click',
+    function() {
+      var playlistName = document.getElementById("playlist-name").value;
+      if (playlistName) {
+        localStorage.setItem(playlistName, '');
+        console.log(localStorage);
+      }
+      var container = document.getElementById("dynamic-form-area");
+      if (container) {
+        container.innerHTML = '';
+      }
+    }
+  )
+}
+  }
+}
