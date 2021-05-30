@@ -11,9 +11,8 @@ const cover = document.getElementById('cover');
 const currTime = document.querySelector('#currTime');
 const durTime = document.querySelector('#durTime');
 
-// Song titles
-// const songs = ['hey', 'summer', 'ukulele'];
-var songs = {};
+var songs = [];
+var playlist = [];
 let songIndex = 0;
 
 fetch("json/songurls.json")
@@ -24,11 +23,9 @@ fetch("json/songurls.json")
 
 function init(data) {
     songs = data;
-    // loadSong(songIndex);
-
     var html = "";
     data.forEach(song => {
-        html += song.url + '<button onclick="loadSong('+song.id+')">Play</button><br>';
+        html += song.url + '<button onclick="loadSong('+song.id+')">Play</button><button onclick="addSong('+song.id+')">Add</button><br>';
     });
     var mainContent = document.getElementById("main-content");
     if (mainContent) {
@@ -39,15 +36,111 @@ function init(data) {
 function showPlaylists() {
   var html = "";
   for (var i = 0; i < localStorage.length; i++){
-    var item = localStorage.key(i);
+    var item = localStorage.key(i) + '<button onclick="openPlaylist(\''+localStorage.key(i)+'\')">Open</button>';
     html += item + '<br>';
   }
   document.getElementById("playlist-content").innerHTML = html;
 }
 
+function openPlaylist(name) {
+  var playlistJSON = JSON.parse(localStorage.getItem(name));
+  songs = [];
+  var html = "";
+  var counter = 0;
+  playlistJSON.songs.forEach(song => {
+    if (song) {
+      html += song.url + '<button onclick="loadSong('+counter+')">Play</button><br>';
+      songs.push({
+        id: counter,
+        name: song.name,
+        url: song.url
+      });
+      counter++;
+    }
+  });
+  console.log(songs);
+  var mainContent = document.getElementById("playlist-content");
+  if (mainContent) {
+    console.log("main");
+      mainContent.innerHTML = html;
+  }
+}
+
+function addSong(songId) {
+  song = songs[songId];
+
+  var container = document.getElementById('dynamic-form-area');
+  if (container) {
+    var select = '<select name="playlists" id="playlists">';
+    for (var i = 0; i < localStorage.length; i++){
+      select += '<option value="'+localStorage.key(i)+'">'+localStorage.key(i)+'</option>';
+    }
+    select += '</select>';
+
+    var html = '\
+    <div class="bg-modal" id="bg-modal">\
+        <div class="modal-content">\
+            <div class="modal-header">\
+                Add song\
+                <i class="fa fa-close fa-2x" aria-hidden="true" id="fa-close-form"></i>\
+            </div>\
+                <table style="margin:0 auto 15px auto;">\
+                    <tr>\
+                        <td>'+select+'</td>\
+                    </tr>\
+                    <tr>\
+                      <td>\
+                        <button id="add-song-button">\
+                          Add\
+                        </button>\
+                      </td>\
+                    </tr>\
+                </table>\
+        </div>\
+    </div>';
+    container.innerHTML = html;
+    document.getElementById('bg-modal').style.display = 'flex';
+    document.querySelector('html').style.overflow = 'hidden';
+
+    var faCloseDynamicform = document.getElementById('fa-close-form');
+    if (faCloseDynamicform) {
+      faCloseDynamicform.addEventListener('click',
+        function() {
+          var container = document.getElementById("dynamic-form-area");
+          if (container) {
+            container.innerHTML = '';
+          }
+        }
+      )
+    }
+
+    var addSong = document.getElementById('add-song-button');
+    if (addSong) {
+      addSong.addEventListener('click',
+        function() {
+          var playlistName = document.getElementById("playlists").value;
+          console.log(playlistName);
+          if (playlistName) {
+            var playlist = localStorage.getItem(playlistName);
+            playlist = JSON.parse(playlist);
+            playlist.songs[songId] = song;
+            localStorage.setItem(playlistName, JSON.stringify(playlist));
+            console.log(localStorage);
+          }
+          var container = document.getElementById("dynamic-form-area");
+          if (container) {
+            container.innerHTML = '';
+          }
+        }
+      )
+    }
+  }
+}
+
 // Update song details
 function loadSong(songId) {
   song = songs[songId];
+  console.log(songId);
   songIndex = songId;
   title.innerText = song.name;
   audio.src = 'http://localhost:8000/music/'+song.url;
@@ -241,37 +334,37 @@ function createPlaylist() {
                 </table>\
         </div>\
     </div>';
-container.innerHTML = html;
-document.getElementById('bg-modal').style.display = 'flex';
-document.querySelector('html').style.overflow = 'hidden';
-
-var faCloseDynamicform = document.getElementById('fa-close-form');
-if (faCloseDynamicform) {
-  faCloseDynamicform.addEventListener('click',
-    function() {
-      var container = document.getElementById("dynamic-form-area");
-      if (container) {
-        container.innerHTML = '';
-      }
+    container.innerHTML = html;
+    document.getElementById('bg-modal').style.display = 'flex';
+    document.querySelector('html').style.overflow = 'hidden';
+      
+    var faCloseDynamicform = document.getElementById('fa-close-form');
+    if (faCloseDynamicform) {
+      faCloseDynamicform.addEventListener('click',
+        function() {
+          var container = document.getElementById("dynamic-form-area");
+          if (container) {
+            container.innerHTML = '';
+          }
+        }
+      )
     }
-  )
-}
-
-var createPlaylist = document.getElementById('create-playlist-button');
-if (createPlaylist) {
-  createPlaylist.addEventListener('click',
-    function() {
-      var playlistName = document.getElementById("playlist-name").value;
-      if (playlistName) {
-        localStorage.setItem(playlistName, '');
-        console.log(localStorage);
-      }
-      var container = document.getElementById("dynamic-form-area");
-      if (container) {
-        container.innerHTML = '';
-      }
+    
+    var createPlaylist = document.getElementById('create-playlist-button');
+    if (createPlaylist) {
+      createPlaylist.addEventListener('click',
+        function() {
+          var playlistName = document.getElementById("playlist-name").value;
+          if (playlistName) {
+            localStorage.setItem(playlistName, '{"songs": []}');
+            console.log(localStorage);
+          }
+          var container = document.getElementById("dynamic-form-area");
+          if (container) {
+            container.innerHTML = '';
+          }
+        }
+      )
     }
-  )
-}
   }
 }
