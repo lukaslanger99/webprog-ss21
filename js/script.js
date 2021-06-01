@@ -1,3 +1,4 @@
+// div cointainer
 const musicContainer = document.getElementById('music-container');
 const playBtn = document.getElementById('play');
 const prevBtn = document.getElementById('prev');
@@ -14,25 +15,29 @@ var songs = [];
 var playlist = [];
 let songIndex = 0;
 
+// read json
 fetch("json/songurls.json")
 .then(response => response.json())
 .then(data => {
   init(data.songs);
 })
 
+// init songs and print on index
 function init(data) {
-    songs = data;
-    var html = '<ol class="gradient-list">';
-    data.forEach(song => {
-        html += "<li>" + song.url + '<button onclick="addSong('+song.id+')">Add</button><button onclick="loadSong('+song.id+')">Play</button><br></li>';
-    });
-    html += "</ol>"
-    var mainContent = document.getElementById("main-content");
-    if (mainContent) {
-        mainContent.innerHTML = html;
-    }
+  songs = data;
+  var html = '<ol class="gradient-list">';
+  data.forEach(song => {
+    html += "<li>" + song.url + '<button onclick="addSong('+song.id+')">Add</button><button onclick="loadSong('+song.id+')">Play</button><br></li>';
+  });
+  html += "</ol>"
+  var mainContent = document.getElementById("main-content");
+  if (mainContent) {
+    mainContent.innerHTML = html;
+    console.log("songs have been initialized");
+  }
 }
 
+// print all playlists
 function showPlaylists() {
   var html = '<ol class="gradient-list">';
   for (var i = 0; i < localStorage.length; i++){
@@ -43,6 +48,7 @@ function showPlaylists() {
   document.getElementById("playlist-content").innerHTML = html;
 }
 
+// open playlist and print songs
 function openPlaylist(name) {
   var playlistJSON = JSON.parse(localStorage.getItem(name));
   songs = [];
@@ -63,12 +69,13 @@ function openPlaylist(name) {
   var mainContent = document.getElementById("playlist-content");
   if (mainContent) {
     mainContent.innerHTML = html;
+    console.log("opened playlist: " + name);
   }
 }
 
+// open form to add song to playlist
 function addSong(songId) {
   song = songs[songId];
-
   var container = document.getElementById('dynamic-form-area');
   if (container) {
     var select = '<select name="playlists" id="playlists">';
@@ -99,6 +106,7 @@ function addSong(songId) {
         </div>\
     </div>';
     container.innerHTML = html;
+    musicContainer.style.display = 'none';
     document.getElementById('bg-modal').style.display = 'flex';
     document.querySelector('html').style.overflow = 'hidden';
 
@@ -109,6 +117,7 @@ function addSong(songId) {
           var container = document.getElementById("dynamic-form-area");
           if (container) {
             container.innerHTML = '';
+            musicContainer.style.display = 'flex';
           }
         }
       )
@@ -125,11 +134,12 @@ function addSong(songId) {
             playlist = JSON.parse(playlist);
             playlist.songs[songId] = song;
             localStorage.setItem(playlistName, JSON.stringify(playlist));
-            console.log(localStorage);
+            console.log("added: " + song.name + ", to: " + playlistName);
           }
           var container = document.getElementById("dynamic-form-area");
           if (container) {
             container.innerHTML = '';
+            musicContainer.style.display = 'flex';
           }
         }
       )
@@ -137,81 +147,61 @@ function addSong(songId) {
   }
 }
 
-// Update song details
+// update song details
 function loadSong(songId) {
   song = songs[songId];
-  console.log(songId);
   songIndex = songId;
   title.innerText = song.name;
   audio.src = 'http://localhost:8000/music/'+song.url;
-
   playSong();
 }
 
-// Play song
+// play song
 function playSong() {
   musicContainer.classList.add('play');
   playBtn.querySelector('i.fas').classList.remove('fa-play');
   playBtn.querySelector('i.fas').classList.add('fa-pause');
-
   audio.play();
-  var playPromise = audio.play();
-
-  // In browsers that don’t yet support this functionality,
-  // playPromise won’t be defined.
-  if (playPromise !== undefined) {
-    playPromise.then(function() {
-      // Automatic playback started!
-    }).catch(function(error) {
-      // Automatic playback failed.
-      // Show a UI element to let the user manually start playback.
-    });
-  }
+  console.log("played: " + songs[songIndex].name);
 }
 
-// Pause song
+// pause song
 function pauseSong() {
   musicContainer.classList.remove('play');
   playBtn.querySelector('i.fas').classList.add('fa-play');
   playBtn.querySelector('i.fas').classList.remove('fa-pause');
-
   audio.pause();
+  console.log("paused: " + songs[songIndex].name);
 }
 
-// Previous song
+// previous song
 function prevSong() {
-  songIndex--;
-
+  songIndex--
   if (songIndex < 0) {
     songIndex = songs.length - 1;
   }
-
   loadSong(songIndex);
-
   playSong();
 }
 
-// Next song
+// next song
 function nextSong() {
   songIndex++;
-
   if (songIndex > songs.length - 1) {
     songIndex = 0;
   }
-
   loadSong(songIndex);
-
   playSong();
 }
 
-// Update progress bar
+// update progress bar
 function updateProgress(e) {
   const { duration, currentTime } = e.srcElement;
   const progressPercent = (currentTime / duration) * 100;
   progress.style.width = `${progressPercent}%`;
 }
 
-// Set progress bar
+// set progress bar
 function setProgress(e) {
   const width = this.clientWidth;
   const clickX = e.offsetX;
@@ -220,7 +210,7 @@ function setProgress(e) {
   audio.currentTime = (clickX / width) * duration;
 }
 
-// get duration & currentTime for Time of song
+// current time printen
 function DurTime (e) {
 	const {duration,currentTime} = e.srcElement;
 	var sec;
@@ -275,11 +265,10 @@ function DurTime (e) {
 	} 
 
 	// define seconds duration
-	
 	get_sec_d (duration);
 };
 
-// Event listeners
+// event listeners
 playBtn.addEventListener('click', () => {
   const isPlaying = musicContainer.classList.contains('play');
 
@@ -290,20 +279,20 @@ playBtn.addEventListener('click', () => {
   }
 });
 
-// Change song
+// change song
 prevBtn.addEventListener('click', prevSong);
 nextBtn.addEventListener('click', nextSong);
 
-// Time/song update
+// time/song update
 audio.addEventListener('timeupdate', updateProgress);
 
-// Click on progress bar
+// click on progress bar
 progressContainer.addEventListener('click', setProgress);
 
-// Song ends
+// song ends
 audio.addEventListener('ended', nextSong);
 
-// Time of song
+// time of song
 audio.addEventListener('timeupdate',DurTime);
 
 let volume = document.querySelector("#volume-control");
@@ -311,6 +300,7 @@ volume.addEventListener("change", function(e) {
 audio.volume = e.currentTarget.value / 100;
 })
 
+// open form to create playlist
 function createPlaylist() {
   var container = document.getElementById('dynamic-form-area');
   if (container) {
@@ -336,6 +326,7 @@ function createPlaylist() {
         </div>\
     </div>';
     container.innerHTML = html;
+    musicContainer.style.display = 'none';
     document.getElementById('bg-modal').style.display = 'flex';
     document.querySelector('html').style.overflow = 'hidden';
       
@@ -346,6 +337,7 @@ function createPlaylist() {
           var container = document.getElementById("dynamic-form-area");
           if (container) {
             container.innerHTML = '';
+            musicContainer.style.display = 'flex';
           }
         }
       )
@@ -358,11 +350,12 @@ function createPlaylist() {
           var playlistName = document.getElementById("playlist-name").value;
           if (playlistName) {
             localStorage.setItem(playlistName, '{"songs": []}');
-            console.log(localStorage);
+            console.log("created playlist: " + playlistName);
           }
           var container = document.getElementById("dynamic-form-area");
           if (container) {
             container.innerHTML = '';
+            musicContainer.style.display = 'flex';
           }
         }
       )
