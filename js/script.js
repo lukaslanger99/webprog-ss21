@@ -8,8 +8,7 @@ const progress = document.getElementById('progress');
 const progressContainer = document.getElementById('progress-container');
 const title = document.getElementById('title');
 const cover = document.getElementById('cover');
-const currTime = document.querySelector('#currTime');
-const durTime = document.querySelector('#durTime');
+const currTime = document.getElementById('currTime');
 
 var songs = [];
 var playlist = [];
@@ -23,10 +22,11 @@ fetch("json/songurls.json")
 
 function init(data) {
     songs = data;
-    var html = "";
+    var html = '<ol class="gradient-list">';
     data.forEach(song => {
-        html += song.url + '<button onclick="loadSong('+song.id+')">Play</button><button onclick="addSong('+song.id+')">Add</button><br>';
+        html += "<li>" + song.url + '<button onclick="addSong('+song.id+')">Add</button><button onclick="loadSong('+song.id+')">Play</button><br></li>';
     });
+    html += "</ol>"
     var mainContent = document.getElementById("main-content");
     if (mainContent) {
         mainContent.innerHTML = html;
@@ -34,22 +34,23 @@ function init(data) {
 }
 
 function showPlaylists() {
-  var html = "";
+  var html = '<ol class="gradient-list">';
   for (var i = 0; i < localStorage.length; i++){
-    var item = localStorage.key(i) + '<button onclick="openPlaylist(\''+localStorage.key(i)+'\')">Open</button>';
+    var item = "<li>" + localStorage.key(i) + '<button onclick="openPlaylist(\''+localStorage.key(i)+'\')">Open</button></li>';
     html += item + '<br>';
   }
+  html += "</ol>"
   document.getElementById("playlist-content").innerHTML = html;
 }
 
 function openPlaylist(name) {
   var playlistJSON = JSON.parse(localStorage.getItem(name));
   songs = [];
-  var html = "";
+  var html = '<ol class="gradient-list">';
   var counter = 0;
   playlistJSON.songs.forEach(song => {
     if (song) {
-      html += song.url + '<button onclick="loadSong('+counter+')">Play</button><br>';
+      html += "<li>" + song.url + '<button onclick="loadSong('+counter+')">Play</button><br></li>';
       songs.push({
         id: counter,
         name: song.name,
@@ -58,11 +59,10 @@ function openPlaylist(name) {
       counter++;
     }
   });
-  console.log(songs);
+  html += "</ol>"
   var mainContent = document.getElementById("playlist-content");
   if (mainContent) {
-    console.log("main");
-      mainContent.innerHTML = html;
+    mainContent.innerHTML = html;
   }
 }
 
@@ -157,16 +157,16 @@ function playSong() {
   audio.play();
   var playPromise = audio.play();
 
-// In browsers that don’t yet support this functionality,
-// playPromise won’t be defined.
-if (playPromise !== undefined) {
-  playPromise.then(function() {
-    // Automatic playback started!
-  }).catch(function(error) {
-    // Automatic playback failed.
-    // Show a UI element to let the user manually start playback.
-  });
-}
+  // In browsers that don’t yet support this functionality,
+  // playPromise won’t be defined.
+  if (playPromise !== undefined) {
+    playPromise.then(function() {
+      // Automatic playback started!
+    }).catch(function(error) {
+      // Automatic playback failed.
+      // Show a UI element to let the user manually start playback.
+    });
+  }
 }
 
 // Pause song
@@ -277,10 +277,6 @@ function DurTime (e) {
 	// define seconds duration
 	
 	get_sec_d (duration);
-
-	// change duration DOM
-	durTime.innerHTML = min_d +':'+ sec_d;
-		
 };
 
 // Event listeners
@@ -309,6 +305,11 @@ audio.addEventListener('ended', nextSong);
 
 // Time of song
 audio.addEventListener('timeupdate',DurTime);
+
+let volume = document.querySelector("#volume-control");
+volume.addEventListener("change", function(e) {
+audio.volume = e.currentTarget.value / 100;
+})
 
 function createPlaylist() {
   var container = document.getElementById('dynamic-form-area');
