@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
 <html lang="en">
-    <head>
-        <title>Music-Player</title>
-        <link rel="stylesheet" type="text/css" href="css/normalmode.css">
-        <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css"
-        />
-        <script src="https://use.fontawesome.com/8c1a9566b2.js"></script>
-    </head>
+  <head>
+    <title>Music-Player</title>
+    <!-- stylesheet -->
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <!-- fontawesome importieren -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css"/>
+    <!-- mobile ansicht -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+</head>
     <body>
         <div class="top-bar">
             <a href="index.html">
@@ -20,10 +20,13 @@
             New Playlist
             </div>
             <a href="playlists.html">
-                <div class="button">
-                Playlists
-                </div>
+              <div class="button">
+              Playlists
+              </div>
             </a>
+            <div class="button" onclick="toggleDarkmode()">
+              <i class="fas fa-moon"></i>
+            </div>
         </div>
         <div id="playlist-content"></div>
         <div id="dynamic-form-area"></div>
@@ -51,6 +54,7 @@
             <button id="next" class="action-btn">
               <i class="fas fa-forward"></i>
             </button>
+            <input type="range" id="volume-control" min="0" max="100" value="100">
           <div id="currTime"></div>
           </div>
         </div>

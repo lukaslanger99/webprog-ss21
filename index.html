@@ -2,12 +2,12 @@
 <html lang="en">
     <head>
         <title>Music-Player</title>
-        <link rel="stylesheet" type="text/css" href="css/normalmode.css">
-        <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css"
-        />
-        <script src="https://use.fontawesome.com/8c1a9566b2.js"></script>
+        <!-- stylesheet -->
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <!-- fontawesome importieren -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css"/>
+        <!-- mobile ansicht -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     </head>
     <body>
         <div class="top-bar">
@@ -24,6 +24,9 @@
                 Playlists
               </div>
             </a>
+            <div class="button" onclick="toggleDarkmode()">
+              <i class="fas fa-moon"></i>
+            </div>
         </div>
         <div id="main-content"></div>
         <div id="dynamic-form-area"></div>

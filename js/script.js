@@ -22,10 +22,12 @@ fetch("json/songurls.json")
   init(data.songs);
 })
 
+checkDarkmode();
+
 // init songs and print on index
 function init(data) {
   songs = data;
-  var html = '<ol class="gradient-list">';
+  var html = '<ol>';
   data.forEach(song => {
     html += "<li>" + song.url + '<button onclick="addSong('+song.id+')">Add</button><button onclick="loadSong('+song.id+')">Play</button><br></li>';
   });
@@ -39,7 +41,7 @@ function init(data) {
 
 // print all playlists
 function showPlaylists() {
-  var html = '<ol class="gradient-list">';
+  var html = '<ol>';
   for (var i = 0; i < localStorage.length; i++){
     var item = "<li>" + localStorage.key(i) + '<button onclick="openPlaylist(\''+localStorage.key(i)+'\')">Open</button></li>';
     html += item + '<br>';
@@ -52,7 +54,7 @@ function showPlaylists() {
 function openPlaylist(name) {
   var playlistJSON = JSON.parse(localStorage.getItem(name));
   songs = [];
-  var html = '<ol class="gradient-list">';
+  var html = '<ol>';
   var counter = 0;
   playlistJSON.songs.forEach(song => {
     if (song) {
@@ -361,4 +363,25 @@ function createPlaylist() {
       )
     }
   }
+}
+
+// check localstorage if darkmode is activated
+function checkDarkmode() {
+  var darkmode = localStorage.getItem("darkmode");
+  if (darkmode == "true") {
+    document.body.classList.toggle("dark-mode");
+  }
+}
+
+// toggle darkmode
+function toggleDarkmode() {
+  var darkmode = localStorage.getItem("darkmode");
+  if (darkmode == "true") {
+    localStorage.removeItem("darkmode");
+    console.log("Darkmode disabled");
+  } else {
+    localStorage.setItem("darkmode", "true");
+    console.log("Darkmode enabled");
+  }
+  document.body.classList.toggle("dark-mode");
 }
