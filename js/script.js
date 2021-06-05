@@ -43,8 +43,10 @@ function init(data) {
 function showPlaylists() {
   var html = '<ol>';
   for (var i = 0; i < localStorage.length; i++){
-    var item = "<li>" + localStorage.key(i) + '<button onclick="openPlaylist(\''+localStorage.key(i)+'\')">Open</button></li>';
-    html += item + '<br>';
+    if (localStorage.key(i) != 'darkmode') {
+      var item = "<li>" + localStorage.key(i) + '<button onclick="openPlaylist(\''+localStorage.key(i)+'\')">Open</button></li>';
+      html += item + '<br>';
+    }
   }
   html += "</ol>"
   document.getElementById("playlist-content").innerHTML = html;
